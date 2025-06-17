@@ -1,8 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Wizard from '../components/wizard/index.vue'
+</script>
 
 <template>
   <div>
-    <h1>Form View</h1>
-    <p>Welcome to the Form View!</p>
+   <Wizard/>
   </div>
 </template>

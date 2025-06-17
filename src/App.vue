@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Header from './components/globals/header.vue'
-// import Footer from './components/globals/footer.vue'
+import Footer from './components/globals/footer.vue'
 </script>
 
 <template>
@@ -16,7 +16,6 @@ import Header from './components/globals/header.vue'
 
 .main-content {
   margin-top: 56px;
-  min-height: 100vh;
 }
 </style>
 
