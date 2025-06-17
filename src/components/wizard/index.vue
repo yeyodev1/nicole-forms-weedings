@@ -2,7 +2,6 @@
 import { ref, reactive, computed } from 'vue';
 import Step1 from './step1.vue';
 import Step2 from './step2.vue';
-import Step3 from './step3.vue';
 import Step4 from './step4.vue';
 import Step5 from './step5.vue';
 import weddingService from '../services/weedingService';
@@ -10,7 +9,7 @@ import weddingService from '../services/weedingService';
 // 1. Se importa el servicio para conectar con el backend
 
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 3;
 const currentStep = ref(1);
 
 // 2. Se añade una variable para controlar el estado de "cargando"
@@ -25,11 +24,6 @@ const formData = reactive({
   event: {
     date: '',
     guests: null,
-  },
-  preferences: {
-    type: [],
-    products: [],
-    otherProductDetails: '',
   },
   closing: {
     details: '',
@@ -104,8 +98,7 @@ const submitForm = async () => {
     <div class="wizard-body">
       <Step1 v-if="currentStep === 1" v-model="formData.contact" />
       <Step2 v-if="currentStep === 2" v-model="formData.event" />
-      <Step3 v-if="currentStep === 3" v-model="formData.preferences" />
-      <Step4 v-if="currentStep === 4" v-model="formData.closing" />
+      <Step4 v-if="currentStep === 3" v-model="formData.closing" />
       <Step5 v-if="currentStep > TOTAL_STEPS" />
     </div>
 
