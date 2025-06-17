@@ -5,12 +5,17 @@ import Step2 from './step2.vue';
 import Step3 from './step3.vue';
 import Step4 from './step4.vue';
 import Step5 from './step5.vue';
+import weddingService from '../services/weedingService';
 
-const TOTAL_STEPS = 4; // Sin contar el de éxito
+// 1. Se importa el servicio para conectar con el backend
+
+
+const TOTAL_STEPS = 4;
 const currentStep = ref(1);
 
-// Objeto reactivo para almacenar todos los datos del formulario.
-// Esta es la "única fuente de verdad".
+// 2. Se añade una variable para controlar el estado de "cargando"
+const isLoading = ref(false);
+
 const formData = reactive({
   contact: {
     name: '',
@@ -22,8 +27,8 @@ const formData = reactive({
     guests: null,
   },
   preferences: {
-    type: [], // Array para selecciones múltiples
-    products: [], // Array para selecciones múltiples
+    type: [],
+    products: [],
     otherProductDetails: '',
   },
   closing: {
@@ -33,7 +38,7 @@ const formData = reactive({
 
 const wizardTitle = computed(() => {
   if (currentStep.value <= TOTAL_STEPS) {
-    return "Celebra tu Boda con Luis Reyes";
+    return "Celebra tu Boda con Nicole Pastry Arts";
   }
   return "¡Formulario Enviado!";
 });
@@ -45,7 +50,7 @@ const wizardDescription = computed(() => {
   return `Gracias, ${formData.contact.name}. Hemos recibido tus datos y te contactaremos pronto.`;
 });
 
-// Navegación
+
 const nextStep = () => {
   if (currentStep.value < TOTAL_STEPS) {
     currentStep.value++;
@@ -58,10 +63,30 @@ const prevStep = () => {
   }
 };
 
-const submitForm = () => {
-  // Aquí iría la lógica para enviar los datos a un servidor/API
-  console.log('Formulario enviado:', JSON.parse(JSON.stringify(formData)));
-  currentStep.value++; // Avanza al paso de "Éxito"
+// 3. La función submitForm ahora es asíncrona y usa el servicio
+const submitForm = async () => {
+  if (isLoading.value) return; // Previene múltiples envíos si ya está cargando
+
+  isLoading.value = true; // El envío comienza, activamos el estado de carga
+
+  try {
+    // Llamamos al método de nuestro servicio, pasándole los datos del formulario
+    await weddingService.submitInquiry(formData);
+
+    console.log('Formulario enviado exitosamente al backend.');
+
+    // Si la petición fue exitosa, avanzamos al paso de agradecimiento
+    currentStep.value++;
+
+  } catch (error) {
+    console.error('Error al enviar el formulario:', error);
+    // Mostramos un mensaje de error simple al usuario
+    alert('Hubo un problema al enviar tu solicitud. Por favor, inténtalo de nuevo más tarde.');
+
+  } finally {
+    // Ya sea que falle o tenga éxito, desactivamos el estado de carga
+    isLoading.value = false;
+  }
 };
 </script>
 
@@ -93,8 +118,9 @@ const submitForm = () => {
         Siguiente
       </button>
 
-      <button class="btn-primary" @click="submitForm" v-if="currentStep === TOTAL_STEPS">
-        Enviar y Finalizar
+      <button class="btn-primary" @click="submitForm" v-if="currentStep === TOTAL_STEPS" :disabled="isLoading">
+        <span v-if="isLoading">Enviando...</span>
+        <span v-else>Enviar y Finalizar</span>
       </button>
     </div>
   </div>
